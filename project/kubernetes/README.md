@@ -1,3 +1,3 @@
 ## Kubernetes Declarative Manifests 
 
-Place the Kubernetes declarative manifests in this directory.
+Maifests needed to deploy techtrends on kubenetes cluster using kubectl commands
