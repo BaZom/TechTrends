@@ -1,1 +1,9 @@
-
+apiVersion: v1
+name: techtrends 
+description: run techtrends
+keywords:
+- techtrends
+version: 1.0.0
+maintainers:
+- name: Basem Abughallya 
+  email: basem.abughallya@gmail.com
