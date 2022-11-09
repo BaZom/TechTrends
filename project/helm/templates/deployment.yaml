@@ -5,9 +5,9 @@ metadata:
   labels:
     app: techtrends
   name: techtrends
-  namespace: sandbox
+  namespace: {{ .Values.namespace.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: techtrends
@@ -18,23 +18,23 @@ spec:
         app: techtrends
     spec:
       containers:
-      - image: bazom/techtrends:v1.0.0
-        imagePullPolicy: IfNotPresent
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: techtrends
         ports:
-         - containerPort: 3111
+         - containerPort: {{ .Values.containerPort }}
         livenessProbe:
            httpGet:
-             path: /healthz
-             port: 3111
+             path: {{ .Values.livenessProbe.path }}
+             port: {{ .Values.containerPort }}
         readinessProbe:
            httpGet:
-             path: /healthz
-             port: 3111
+             path: {{ .Values.readinessProbe.path }}
+             port: {{ .Values.containerPort }}
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "250m"
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.CPU }}
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.CPU }}
