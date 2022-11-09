@@ -9,7 +9,7 @@ service:
 
 image:
   repository: bazom/techtrends
-  tag: latest
+  tag: v1.0.0
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -17,10 +17,10 @@ replicaCount: 1
 resources:
   requests: 
     memory: 64Mi
-	CPU: 250m
+    CPU: 250m
   limits: 
     memory: 128Mi
-	CPU: 500m
+    CPU: 500m
 
 containerPort: 3111
 
