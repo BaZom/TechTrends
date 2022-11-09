@@ -6,7 +6,8 @@ service port:
 
 replicaCount: 5
 
-image pullPolicy: Always
+image:
+  pullPolicy: Always
 
 resources:
   requests: 
