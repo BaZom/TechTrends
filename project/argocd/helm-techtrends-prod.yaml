@@ -13,5 +13,5 @@ spec:
       valueFiles:
       - values-prod.yaml
     path: helm
-    repoURL: https://github.com/BaZom/nd064_TechTrends/tree/main/project/helm
+    repoURL: https://github.com/BaZom/nd064_TechTrends/tree/main/project
     targetRevision: HEAD
