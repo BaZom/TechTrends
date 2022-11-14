@@ -3,11 +3,11 @@ LABEL maintainer="Basem Abughallya"
 
 WORKDIR /usr/src/app
 
-COPY ./techtrends/requirements.txt ./
+COPY ./requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . ./
+COPY . /usr/src/app
 
 RUN python init_db.py
 
