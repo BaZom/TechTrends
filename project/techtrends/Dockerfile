@@ -4,6 +4,7 @@ LABEL maintainer="Basem Abughallya"
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 
+RUN pip freeze > requirements.txt
 RUN pip install -r requirements.txt
 RUN python init_db.py
 
