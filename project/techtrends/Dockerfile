@@ -11,5 +11,5 @@ RUN python init_db.py
 EXPOSE 3111
 
 # command to run on container start
-CMD [ "python", "app.py" ]
+CMD [ "python", "src/app.py" ]
 
