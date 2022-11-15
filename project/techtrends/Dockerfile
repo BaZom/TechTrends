@@ -1,7 +1,7 @@
 FROM python:3.8
 LABEL maintainer="Basem Abughallya"
 
-COPY resources /usr/src/app
+COPY TechTrends/project/techtrends /usr/src/app
 WORKDIR /usr/src/app
 
 RUN pip install  --no-cache-dir -r requirements.txt
