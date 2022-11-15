@@ -23,7 +23,6 @@ def check_db_connection(connection):
 
 def get_db_connection():
     """This function connects to database with the name database.db."""
-    #global app.current_connections_counter, app.app.app.config['all_connections_counter']
     connection = sqlite3.connect('database.db')
     connection.row_factory = sqlite3.Row
     if check_db_connection:
@@ -33,7 +32,6 @@ def get_db_connection():
 
 def get_post(post_id):
     """Function to get a post using its ID"""
-    #global app.config['current_connections_counter']
     connection = get_db_connection()
     post = connection.execute('SELECT * FROM posts WHERE id = ?',
                         (post_id,)).fetchone()
@@ -45,7 +43,6 @@ def get_post(post_id):
 # Define the main route of the web application 
 @app.route('/')
 def index():
-    #global app.config['current_connections_counter']
     connection = get_db_connection()
     posts = connection.execute('SELECT * FROM posts').fetchall()
     connection.close()
@@ -76,7 +73,6 @@ def about():
 @app.route('/create', methods=('GET', 'POST'))
 def create():
     """ Define the post creation functionality """
-    #global app.config['current_connections_counter']
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
@@ -107,7 +103,6 @@ def healthcheck():
 
 @app.route('/metrics')
 def metrics():
-    #global app.config['current_connections_counter']
     connection = get_db_connection()
     posts = connection.execute('SELECT * FROM posts').fetchall()
     
