@@ -1,8 +1,8 @@
 FROM python:3.8
 LABEL maintainer="Basem Abughallya"
 
-COPY . /usr/src/app
-WORKDIR /usr/src/app
+COPY . /app
+WORKDIR /app
 
 RUN pip install -r requirements.txt
 RUN python init_db.py
