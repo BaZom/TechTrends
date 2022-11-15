@@ -6,9 +6,12 @@ import logging
 from datetime import datetime
 import sys
 
-current_connections_counter = 0
-all_connections_counter = 0
+# Define the Flask application
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your secret key'
 
+app.config['current_connections_counter'] = 0
+app.config['all_connections_counter'] = 0
 
 def check_db_connection(connection):
      try:
@@ -20,36 +23,33 @@ def check_db_connection(connection):
 
 def get_db_connection():
     """This function connects to database with the name database.db."""
-    global current_connections_counter, all_connections_counter
+    #global app.current_connections_counter, app.app.app.config['all_connections_counter']
     connection = sqlite3.connect('database.db')
     connection.row_factory = sqlite3.Row
     if check_db_connection:
-        current_connections_counter +=1
-        all_connections_counter +=1
+        app.config['current_connections_counter'] +=1
+        app.config['all_connections_counter'] +=1
         return connection
 
 def get_post(post_id):
     """Function to get a post using its ID"""
-    global current_connections_counter
+    #global app.config['current_connections_counter']
     connection = get_db_connection()
     post = connection.execute('SELECT * FROM posts WHERE id = ?',
                         (post_id,)).fetchone()
     connection.close()
-    current_connections_counter -=1
+    app.config['current_connections_counter'] -=1
     return post
 
-# Define the Flask application
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your secret key'
 
 # Define the main route of the web application 
 @app.route('/')
 def index():
-    global current_connections_counter
+    #global app.config['current_connections_counter']
     connection = get_db_connection()
     posts = connection.execute('SELECT * FROM posts').fetchall()
     connection.close()
-    current_connections_counter -=1
+    app.config['current_connections_counter'] -=1
     return render_template('index.html', posts=posts)
 
 
@@ -76,7 +76,7 @@ def about():
 @app.route('/create', methods=('GET', 'POST'))
 def create():
     """ Define the post creation functionality """
-    global current_connections_counter
+    #global app.config['current_connections_counter']
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
@@ -89,7 +89,7 @@ def create():
                          (title, content))
             connection.commit()
             connection.close()
-            current_connections_counter -=1
+            app.config['current_connections_counter'] -=1
 
             app.logger.debug(f'new article "{title}" created!')
             return redirect(url_for('index'))
@@ -107,17 +107,17 @@ def healthcheck():
 
 @app.route('/metrics')
 def metrics():
-    global current_connections_counter
+    #global app.config['current_connections_counter']
     connection = get_db_connection()
     posts = connection.execute('SELECT * FROM posts').fetchall()
     
     response = app.response_class(
-            response=json.dumps({"db_curr_connection_count": current_connections_counter, "db_all_connection_count": all_connections_counter, "post_count": len(posts)}),
+            response=json.dumps({"db_curr_connection_count": app.config['current_connections_counter'], "db_all_connection_count": app.config['all_connections_counter'], "post_count": len(posts)}),
             status=200,
             mimetype='application/json'
     )
     connection.close()
-    current_connections_counter -=1
+    app.config['current_connections_counter'] -=1
     app.logger.info('Metrics request successfull')
     return response
    
