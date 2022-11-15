@@ -4,21 +4,22 @@ from flask import Flask, jsonify, json, render_template, request, url_for, redir
 from werkzeug.exceptions import abort
 import logging
 from datetime import datetime
+import sys
 
 current_connections_counter = 0
 all_connections_counter = 0
+
 
 def check_db_connection(connection):
      try:
         conn.cursor()
         return True
      except Exception as exception:
-        app.logger.error(f'{datetime.now()} ,db connection failed ', exception)
+        app.logger.error('db connection failed ', exception)
         return False
 
-# Function to get a database connection.
-# This function connects to database with the name `database.db`
 def get_db_connection():
+    """This function connects to database with the name database.db."""
     global current_connections_counter, all_connections_counter
     connection = sqlite3.connect('database.db')
     connection.row_factory = sqlite3.Row
@@ -27,8 +28,8 @@ def get_db_connection():
         all_connections_counter +=1
         return connection
 
-# Function to get a post using its ID
 def get_post(post_id):
+    """Function to get a post using its ID"""
     global current_connections_counter
     connection = get_db_connection()
     post = connection.execute('SELECT * FROM posts WHERE id = ?',
@@ -51,27 +52,30 @@ def index():
     current_connections_counter -=1
     return render_template('index.html', posts=posts)
 
-# Define how each individual article is rendered 
-# If the post ID is not found a 404 page is shown
+
 @app.route('/<int:post_id>')
 def post(post_id):
+    """
+    Define how each individual article is rendered 
+    If the post ID is not found a 404 page is shown
+    """
     post = get_post(post_id)
     if post is None:
-        app.logger.debug(f'{datetime.now()} ,Article not found')
+        app.logger.debug('Article not found')
         return render_template('404.html'), 404
     else:
-        app.logger.debug(f'{datetime.now()} ,Article "{post["title"]}" retrieved!')
+        app.logger.debug(f'Article "{post["title"]}" retrieved!')
         return render_template('post.html', post=post)
 
-# Define the About Us page
 @app.route('/about')
 def about():
-    app.logger.info(f'{datetime.now()} ,About Us page is retrieved.')
+    """ Define the About Us page"""
+    app.logger.info('About Us page is retrieved.')
     return render_template('about.html')
 
-# Define the post creation functionality 
 @app.route('/create', methods=('GET', 'POST'))
 def create():
+    """ Define the post creation functionality """
     global current_connections_counter
     if request.method == 'POST':
         title = request.form['title']
@@ -87,7 +91,7 @@ def create():
             connection.close()
             current_connections_counter -=1
 
-            app.logger.debug(f'{datetime.now()} ,new article "{title}" created!')
+            app.logger.debug(f'new article "{title}" created!')
             return redirect(url_for('index'))
 
     return render_template('create.html')
@@ -114,10 +118,22 @@ def metrics():
     )
     connection.close()
     current_connections_counter -=1
-    app.logger.info(f'{datetime.now()} ,Metrics request successfull')
+    app.logger.info('Metrics request successfull')
     return response
    
 # start the application on port 3111
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+
+    # Set logger to handle STDOUT and STDERR
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stderr_handler = logging.StreamHandler(sys.stderr)
+    handlers = [stderr_handler, stdout_handler]
+
+    # Create the log file and format each log
+    logging.basicConfig(
+        format='%(levelname)s:%(name)s:%(asctime)s, %(message)s',
+        level=logging.DEBUG,
+        datefmt='%m-%d-%Y, %H:%M:%S',
+        handlers=handlers
+    )
     app.run(host='0.0.0.0', port='3111')
